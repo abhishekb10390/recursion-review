@@ -4,34 +4,47 @@
 // but you're not, so you'll write it from scratch:
 var parseJSON = function(json) {
   // your code goes here
+  if (typeof(json) !== 'string') {
+    return; 
+  }
+  var primitiveParser = function(value) {
+    return eval(value);
+  };
   //function for number , string, boolean, null, undefined, object, array 
   if (json[0] === '{') {
     //we know its an obect
     var output = {};  
-    for (var i = 2; i < json.length; i++) {
+    var stringObj = json.slice(1, json.length - 1);
+    var keyVals = stringObj.split(',');
+    keyVals.forEach(function(keyVal) {
       var key = '';
       var value = '';
-      if (json[i] === '"') {
-        var j = i + 3;
-        while ((json[j] !== '"' || json[j] !== '}') && j < json.length) {
-          value += json[j];
-          j++;
+      keyVal.split(':').forEach(function(ele, i) {
+        if (i === 0) {
+          key = eval(ele);
+        } else {
+          value = parseJSON(ele);
         }
-console.log(key, value);
-        output[eval(key)] = parseJSON(value);  
-      }
-      key = key + json[i];
-console.log(key)
-    }
+      });
+      output[key] = value;
+    });
+console.log(output); 
     return output;
   } else if (json[0] === '[') {
     //its an array
+    var arrOut = [];
+    var arrString = json.slice(1, json.length - 1);
+    arrString.split(',').forEach(function(ele,i,arr) {
+    
+console.log(arrOut, ele,arr);
+      arrOut.push(parseJSON(ele));
+    });
+    return arrOut;
   } else {
     return primitiveParser(json);  
   } 
-    
-  var primitiveParser = function(value) {
-    return eval(value);
-  };
 };
 
+ 
+
+ 
